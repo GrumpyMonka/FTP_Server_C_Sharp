@@ -12,17 +12,35 @@ namespace ServerFTP
     {
         private const string dbFilePath = "DB_Files.sqlite";
         private DBManager dbManager = null;
+        private Server server = null;
         
         public MainWindow ()
         {
             InitializeComponent();
-
         }
 
         private void buttonStatusServer_Click ( object sender, RoutedEventArgs e )
         {
-
+            if ( server == null )
+            {
+                server = new Server();
+                server.NewMessage += NewClientMessage;
+                server.ServerStart();
+                buttonStatusServer.Content = "Остановить сервер";
+            }
+            else
+            {
+                server.Close();
+                server = null;
+                buttonStatusServer.Content = "Запустить сервер";
+            }
         }
+
+        private void NewClientMessage( Server.ClientMessage clientMessage )
+        {
+            Logger.Log( "Новое сообщение от пользователя: " + clientMessage.Message );
+        }
+
         private void Window_Loaded ( object sender, RoutedEventArgs e )
         {
 
@@ -34,7 +52,7 @@ namespace ServerFTP
 
         private void log( in string str )
         {
-            listBoxLog.Items.Add( str );
+            listBoxLog.Invoke( new Action() { } );
         }
     }
 }

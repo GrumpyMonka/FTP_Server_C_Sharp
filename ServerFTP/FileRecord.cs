@@ -16,7 +16,7 @@ namespace ServerFTP
     {
         [PrimaryKey, AutoIncrement]
         [Column( "id" )]
-        private int ID { get; set; }
+        public int ID { get; set; }
 
         [Column( "fileName" )]
         public string FileName { get; set; }
