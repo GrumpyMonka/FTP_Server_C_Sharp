@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ServerFTP
 {
-    delegate void LoggerFunc ( in string str );
+    delegate void LoggerFunc ( string str );
     internal class Logger
     {  
         public static LoggerFunc loggerFunc { get; set; }

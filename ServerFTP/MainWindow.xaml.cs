@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Data;
 using System.IO;
+using System.Threading;
 using System.Windows;
 
 namespace ServerFTP
@@ -50,9 +51,9 @@ namespace ServerFTP
             dbManager = new DBManager( dbFilePath );
         }
 
-        private void log( in string str )
+        private void log( string str )
         {
-            listBoxLog.Invoke( new Action() { } );
+            listBoxLog.Dispatcher.Invoke( new Action( () => listBoxLog.Items.Add( str ) ) );
         }
     }
 }

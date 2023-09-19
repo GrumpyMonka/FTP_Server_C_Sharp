@@ -61,7 +61,7 @@ namespace ServerFTP
 
         private void SocketAccepter ()
         {
-            //Logger.Log( $"Начало прослушки порта {port}." );
+            Logger.Log( $"Начало прослушки порта {port}." );
             while ( isServerRunning )
             {
                 try
@@ -79,7 +79,7 @@ namespace ServerFTP
                 }
                 catch ( Exception ex )
                 {
-                    //Logger.Log( "Ошибка обработки пришедшего сообщения: " + ex.Message );
+                    Logger.Log( "Ошибка обработки пришедшего сообщения: " + ex.Message );
                 }
             }
         }
