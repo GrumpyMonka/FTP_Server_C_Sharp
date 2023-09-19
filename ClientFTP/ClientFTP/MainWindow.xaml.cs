@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -33,6 +34,9 @@ namespace ClientFTP
 
         private void Button_LoadFile_Click ( object sender, RoutedEventArgs e )
         {   
+            Client client = new Client();
+            client.SendMessage( "Привет" );
+            /*
             SaveFileDialog saveFileDialog = new SaveFileDialog();
             saveFileDialog.Filter = "*.*|Select Folder";
             saveFileDialog.FileName = "Save Files Here";
@@ -42,6 +46,7 @@ namespace ClientFTP
                 string savePath = Path.GetDirectoryName( saveFileDialog.FileName );
                 System.Windows.MessageBox.Show( savePath );
             }
+            */
         }
 
         private void Window_Loaded ( object sender, RoutedEventArgs e )

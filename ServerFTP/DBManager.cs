@@ -7,6 +7,7 @@ using System.Linq;
 using System.Runtime.InteropServices.ComTypes;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 
@@ -34,10 +35,9 @@ namespace ServerFTP
             }
 
             Logger.Log( "ДБ загружена! Идёт разбор данных..." );
-            LoadDataFromDB();
-            Logger.Log( "Данные загружены, кол-во записей: " + fileRecordList.Count + ". Размер данных в ОЗУ: " + GetSizeObject( fileRecordList ) + " Byte." );
+            LoadDataFromDB(); 
         }
-        
+     
         private long GetSizeObject ( object obj )
         {
             using ( Stream stream = new MemoryStream() )
@@ -51,6 +51,7 @@ namespace ServerFTP
         private void LoadDataFromDB()
         {
             fileRecordList = dbConnection.Table<FileRecord>().ToList();
+            Logger.Log( "Данные загружены, кол-во записей: " + fileRecordList.Count + ". Размер данных в ОЗУ: " + GetSizeObject( fileRecordList ) + " Byte." );
         }
     }
 }

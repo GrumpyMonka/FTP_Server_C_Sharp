@@ -8,21 +8,19 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Security.Cryptography;
+using Newtonsoft.Json;
 
 namespace ServerFTP
 {
     internal class Server
     {
         public struct ClientMessage
-        { 
-            public EndPoint ClientSocket { get; set; }
+        {
+            public IPEndPoint EndPointClient { get; set; }
             public string Message { get; set; }
         }
 
-        private const int MY_MTU = 500;
-
-        private Socket serverSocket;
-        private IPEndPoint endPoint;
+        private UdpClient udpServer;
         private int port;
         private bool isServerRunning;
 
@@ -40,9 +38,7 @@ namespace ServerFTP
         {
             try
             {
-                serverSocket = new Socket( AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp );
-                endPoint = new IPEndPoint( IPAddress.Any, port );
-                serverSocket.Bind( endPoint );
+                udpServer = new UdpClient ( port );
             }
             catch ( Exception ex )
             {
@@ -61,20 +57,20 @@ namespace ServerFTP
 
         private void SocketAccepter ()
         {
-            Logger.Log( $"Начало прослушки порта {port}." );
             while ( isServerRunning )
             {
                 try
                 {
-                    byte[] buffer = new byte[MY_MTU];
-                    EndPoint clientEndPoint = new IPEndPoint( IPAddress.Any, 0 );
-                    serverSocket.ReceiveFrom( buffer, SocketFlags.None, ref clientEndPoint );
+                    IPEndPoint endPoint = new IPEndPoint( IPAddress.Any, 0 );
+                    var buffer = udpServer.Receive( ref endPoint );
 
-                    string message = Encoding.UTF8.GetString( buffer );
-                    NewMessage?.Invoke( new ClientMessage
+                    Task.Run( () =>
                     {
-                        ClientSocket = clientEndPoint,
-                        Message = message
+                        NewMessage?.Invoke( new ClientMessage
+                        {
+                            EndPointClient = endPoint,
+                            Message = Encoding.UTF8.GetString( buffer )
+                        } );
                     } );
                 }
                 catch ( Exception ex )
@@ -83,6 +79,13 @@ namespace ServerFTP
                 }
             }
         }
+
+        public async void SendMessage ( ClientMessage message )
+        { 
+            byte[] buffer = Encoding.UTF8.GetBytes( message.Message );
+            int bytes = await udpServer.SendAsync( buffer, buffer.Length, message.EndPointClient );
+        }
+
         /*
         // Этот метод принимает пакеты от всех подключенных клиентов
         private void MessageReceiver ( Socket r_client )
@@ -144,8 +147,10 @@ namespace ServerFTP
         }*/
         public void Close ()
         {
-            isServerRunning = false;
             threadSocketAccepter?.Abort();
+            udpServer.Close();
+            isServerRunning = false;
+            Logger.Log( "Сервер остановлен!" );
         }
     }
 }
