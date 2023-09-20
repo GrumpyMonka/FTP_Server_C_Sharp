@@ -92,6 +92,8 @@
     <Compile Include="APIElement.cs" />
     <Compile Include="Server.cs" />
     <Compile Include="ServerFTP.cs" />
+    <Compile Include="UDPClient\UdpAPI.cs" />
+    <Compile Include="UDPClient\UDPClient.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
